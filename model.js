@@ -8,7 +8,12 @@ matcherModel = {
 
 	currentId: 1,
 
-	
+	selectedCard: null,
+
+	numGuesses: 0,
+	matchedCards: 0,
+	gameStateText: "You haven't won yet, pick two cards.",
+
 	init: function(size){
 		this.size = size || this.size;
 		var numPairs = Math.pow( this.size, 2) / 2;
@@ -47,5 +52,38 @@ matcherModel = {
 		this.value = value;
 	},
 
+	selectedSameCard: function( id ){
+		return this.selectedCard && this.selectedCard.id === id;
+	},
+
+	getCard: function(id){
+		for( var i = 0; i < this.cards.length; i++ ){
+			if( this.cards[i].id === id ) return this.cards[i];
+		}
+		return null;
+	},
+
+	setSelectedCard: function(id){
+		this.selectedCard = this.getCard(id);
+	},
+
+
+	checkGuess: function(id){
+		this.numGuesses++;
+		var isCorrect = false;
+		var guessCard = this.getCard(id);
+
+		if( this.selectedCard && guessCard )
+			isCorrect = this.selectedCard.value === guessCard.value;
+		
+		this.selectedCard = null;
+
+		if( isCorrect ) this.matchedCards += 2;
+
+		if( this.matchedCards === this.cards.length )
+			this.gameStateText = "Congratulations, you win!";
+
+		return isCorrect;
+	}
 
 };
